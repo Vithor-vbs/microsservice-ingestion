@@ -2,10 +2,10 @@
   "name": "trabfinal_nathalino",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server/app.ts",
   "scripts": {
     "start:build": "tsc: -w",
-    "start:run": "nodemon build/index.js",
+    "start:run": "nodemon build/app.js",
     "start": "concurrently npm:start:*"
   },
   "keywords": [],
@@ -15,7 +15,12 @@
     "axios": "^1.6.2",
     "concurrently": "^8.2.2",
     "nodemon": "^3.0.1",
+    "readline-sync": "^1.4.10",
+    "ts-node": "^10.9.1",
     "tsc": "^2.0.4",
     "typescript": "^5.3.2"
+  },
+  "devDependencies": {
+    "@types/readline-sync": "^1.4.8"
   }
 }
