@@ -1,8 +1,8 @@
 import * as readlineSync from "readline-sync";
-import { AcademicApplication } from "./app";
-import { BookRentService } from "./app";
-import { EnrollmentService } from "./app";
-import { MicroserviceService } from "./app";
+import { AcademicApplication } from "./academicApplication";
+import { BookRentService } from "./bookRentService";
+import { EnrollmentService } from "./enrollmentService";
+import { MicroserviceService } from "./MicroserviceService";
 
 const microservice = new MicroserviceService(
   "https://rmi6vdpsq8.execute-api.us-east-2.amazonaws.com/msAluno"
@@ -19,12 +19,14 @@ function displayMenu(): number {
   console.log("\nEscolha uma opção:");
   console.log("1. Listar todos os estudantes");
   console.log("2. Ver detalhes de um estudante");
-  console.log("3. Matricular em uma disciplina");
-  console.log("4. Listar disciplinas matriculadas");
-  console.log("5. Cancelar matrícula em uma disciplina");
-  console.log("6. Alugar um livro");
-  console.log("7. Listar livros alugados");
-  console.log("8. Cancelar aluguel de um livro");
+  console.log("3. Listar alunos por curso");
+  console.log("4. Matricular em uma disciplina");
+  console.log("5. Listar disciplinas matriculadas");
+  console.log("6. Listar alunos por disciplina");
+  console.log("7. Cancelar matrícula em uma disciplina");
+  console.log("8. Alugar um livro");
+  console.log("9. Listar livros alugados");
+  console.log("10. Cancelar aluguel de um livro");
   console.log("0. Sair");
 
   return readlineSync.questionInt("Digite o numero da opcao desejada: ");
@@ -34,6 +36,7 @@ async function handleUserInput(
 ): Promise<void> {
   while (true) {
     const choice = displayMenu();
+    const maxId = (await academicApp.listAllStudents()).length;
 
     switch (choice) {
       case 1:
@@ -45,14 +48,34 @@ async function handleUserInput(
         const studentId = readlineSync.questionInt(
           "Digite o ID do estudante: "
         );
+
+        if (studentId > maxId) {
+          console.log("ID do estudante inválido. Tente novamente.");
+          continue;
+        }
         const studentDetails = await academicApp.getStudentDetails(studentId);
         console.log(`Detalhes do estudante ${studentId}:`, studentDetails);
         break;
 
       case 3:
+        const studentCourse = readlineSync.question("Digite o nome do curso: ");
+        const studentCourses = await academicApp.getStudentsByCourse(
+          studentCourse
+        );
+        console.log(
+          `Alunos matriculados no curso ${studentCourse}:`,
+          studentCourses
+        );
+        break;
+
+      case 4:
         const enrollmentStudentId = readlineSync.questionInt(
           "Digite o ID do estudante: "
         );
+        if (enrollmentStudentId > maxId) {
+          console.log("ID do estudante inválido. Tente novamente.");
+          continue;
+        }
         const disciplineToEnroll = readlineSync.question(
           "Digite o nome da disciplina: "
         );
@@ -62,10 +85,15 @@ async function handleUserInput(
         );
         break;
 
-      case 4:
+      case 5:
         const enrolledDisciplinesStudentId = readlineSync.questionInt(
           "Digite o ID do estudante: "
         );
+
+        if (enrolledDisciplinesStudentId > maxId) {
+          console.log("ID do estudante inválido. Tente novamente.");
+          continue;
+        }
         const enrolledDisciplines = academicApp.getEnrolledDisciplines(
           enrolledDisciplinesStudentId
         );
@@ -75,10 +103,37 @@ async function handleUserInput(
         );
         break;
 
-      case 5:
+      case 6:
+        const enrolledStudentsDiscipline = readlineSync.question(
+          "Digite o nome da disciplina: "
+        );
+        const enrolledStudents = academicApp.getEnrolledStudents(
+          enrolledStudentsDiscipline
+        );
+
+        const studentNames: string[] = [];
+
+        for (const [studentId, _] of enrolledStudents) {
+          const studentDetails = await academicApp.getStudentDetails(studentId);
+          studentNames.push(studentDetails?.nome ?? "");
+        }
+
+        console.log(
+          `Estudantes matriculados em ${enrolledStudentsDiscipline}:`,
+          studentNames
+        );
+        break;
+
+      case 7:
         const cancelEnrollmentStudentId = readlineSync.questionInt(
           "Digite o ID do estudante: "
         );
+
+        if (cancelEnrollmentStudentId > maxId) {
+          console.log("ID do estudante inválido. Tente novamente.");
+          continue;
+        }
+
         const disciplineToCancel = readlineSync.question(
           "Digite o nome da disciplina: "
         );
@@ -86,15 +141,17 @@ async function handleUserInput(
           cancelEnrollmentStudentId,
           disciplineToCancel
         );
-        console.log(
-          `Matricula em ${disciplineToCancel} cancelada para o estudante ${cancelEnrollmentStudentId}`
-        );
         break;
 
-      case 6:
+      case 8:
         const rentBookStudentId = readlineSync.questionInt(
           "Digite o ID do estudante: "
         );
+
+        if (rentBookStudentId > maxId) {
+          console.log("ID do estudante inválido. Tente novamente.");
+          continue;
+        }
         const bookToRent = readlineSync.question("Digite o nome do livro: ");
         academicApp.rentBook(rentBookStudentId, bookToRent);
         console.log(
@@ -102,10 +159,15 @@ async function handleUserInput(
         );
         break;
 
-      case 7:
+      case 9:
         const rentedBooksStudentId = readlineSync.questionInt(
           "Digite o ID do estudante: "
         );
+
+        if (rentedBooksStudentId > maxId) {
+          console.log("ID do estudante inválido. Tente novamente.");
+          continue;
+        }
         const rentedBooks = academicApp.getRentedBooks(rentedBooksStudentId);
         console.log(
           `Livros alugados pelo estudante ${rentedBooksStudentId}:`,
@@ -113,17 +175,19 @@ async function handleUserInput(
         );
         break;
 
-      case 8:
+      case 10:
         const cancelRentStudentId = readlineSync.questionInt(
           "Digite o ID do estudante: "
         );
+
+        if (cancelRentStudentId > maxId) {
+          console.log("ID do estudante inválido. Tente novamente.");
+          continue;
+        }
         const bookToCancelRent = readlineSync.question(
           "Digite o nome do livro: "
         );
         academicApp.cancelRent(cancelRentStudentId, bookToCancelRent);
-        console.log(
-          `Aluguel do livro ${bookToCancelRent} cancelado para o estudante ${cancelRentStudentId}`
-        );
         break;
 
       case 0:
