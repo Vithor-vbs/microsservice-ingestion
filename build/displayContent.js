@@ -61,7 +61,15 @@ function handleUserInput(academicApp) {
     return __awaiter(this, void 0, void 0, function* () {
         while (true) {
             const choice = displayMenu();
-            const maxId = (yield academicApp.listAllStudents()).length;
+            const isValidId = (id) => __awaiter(this, void 0, void 0, function* () {
+                const students = yield academicApp.listAllStudents();
+                for (let student of students) {
+                    if (student.id === id) {
+                        return true;
+                    }
+                }
+                return false;
+            });
             switch (choice) {
                 case 1:
                     const students = yield academicApp.listAllStudents();
@@ -69,7 +77,7 @@ function handleUserInput(academicApp) {
                     break;
                 case 2:
                     const studentId = readlineSync.questionInt("Digite o ID do estudante: ");
-                    if (studentId > maxId) {
+                    if ((yield isValidId(studentId)) == false) {
                         console.log("ID do estudante inválido. Tente novamente.");
                         continue;
                     }
@@ -83,7 +91,7 @@ function handleUserInput(academicApp) {
                     break;
                 case 4:
                     const enrollmentStudentId = readlineSync.questionInt("Digite o ID do estudante: ");
-                    if (enrollmentStudentId > maxId) {
+                    if ((yield isValidId(enrollmentStudentId)) == false) {
                         console.log("ID do estudante inválido. Tente novamente.");
                         continue;
                     }
@@ -93,7 +101,7 @@ function handleUserInput(academicApp) {
                     break;
                 case 5:
                     const enrolledDisciplinesStudentId = readlineSync.questionInt("Digite o ID do estudante: ");
-                    if (enrolledDisciplinesStudentId > maxId) {
+                    if ((yield isValidId(enrolledDisciplinesStudentId)) == false) {
                         console.log("ID do estudante inválido. Tente novamente.");
                         continue;
                     }
@@ -112,7 +120,7 @@ function handleUserInput(academicApp) {
                     break;
                 case 7:
                     const cancelEnrollmentStudentId = readlineSync.questionInt("Digite o ID do estudante: ");
-                    if (cancelEnrollmentStudentId > maxId) {
+                    if ((yield isValidId(cancelEnrollmentStudentId)) == false) {
                         console.log("ID do estudante inválido. Tente novamente.");
                         continue;
                     }
@@ -121,7 +129,7 @@ function handleUserInput(academicApp) {
                     break;
                 case 8:
                     const rentBookStudentId = readlineSync.questionInt("Digite o ID do estudante: ");
-                    if (rentBookStudentId > maxId) {
+                    if ((yield isValidId(rentBookStudentId)) == false) {
                         console.log("ID do estudante inválido. Tente novamente.");
                         continue;
                     }
@@ -131,7 +139,7 @@ function handleUserInput(academicApp) {
                     break;
                 case 9:
                     const rentedBooksStudentId = readlineSync.questionInt("Digite o ID do estudante: ");
-                    if (rentedBooksStudentId > maxId) {
+                    if ((yield isValidId(rentedBooksStudentId)) == false) {
                         console.log("ID do estudante inválido. Tente novamente.");
                         continue;
                     }
@@ -140,7 +148,7 @@ function handleUserInput(academicApp) {
                     break;
                 case 10:
                     const cancelRentStudentId = readlineSync.questionInt("Digite o ID do estudante: ");
-                    if (cancelRentStudentId > maxId) {
+                    if ((yield isValidId(cancelRentStudentId)) == false) {
                         console.log("ID do estudante inválido. Tente novamente.");
                         continue;
                     }

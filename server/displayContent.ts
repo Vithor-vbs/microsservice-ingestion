@@ -36,7 +36,16 @@ async function handleUserInput(
 ): Promise<void> {
   while (true) {
     const choice = displayMenu();
-    const maxId = (await academicApp.listAllStudents()).length;
+
+    const isValidId = async (id: number) => {
+      const students = await academicApp.listAllStudents();
+      for (let student of students) {
+        if (student.id === id) {
+          return true;
+        }
+      }
+      return false;
+    };
 
     switch (choice) {
       case 1:
@@ -49,7 +58,7 @@ async function handleUserInput(
           "Digite o ID do estudante: "
         );
 
-        if (studentId > maxId) {
+        if ((await isValidId(studentId)) == false) {
           console.log("ID do estudante inválido. Tente novamente.");
           continue;
         }
@@ -72,7 +81,7 @@ async function handleUserInput(
         const enrollmentStudentId = readlineSync.questionInt(
           "Digite o ID do estudante: "
         );
-        if (enrollmentStudentId > maxId) {
+        if ((await isValidId(enrollmentStudentId)) == false) {
           console.log("ID do estudante inválido. Tente novamente.");
           continue;
         }
@@ -90,7 +99,7 @@ async function handleUserInput(
           "Digite o ID do estudante: "
         );
 
-        if (enrolledDisciplinesStudentId > maxId) {
+        if ((await isValidId(enrolledDisciplinesStudentId)) == false) {
           console.log("ID do estudante inválido. Tente novamente.");
           continue;
         }
@@ -129,7 +138,7 @@ async function handleUserInput(
           "Digite o ID do estudante: "
         );
 
-        if (cancelEnrollmentStudentId > maxId) {
+        if ((await isValidId(cancelEnrollmentStudentId)) == false) {
           console.log("ID do estudante inválido. Tente novamente.");
           continue;
         }
@@ -148,7 +157,7 @@ async function handleUserInput(
           "Digite o ID do estudante: "
         );
 
-        if (rentBookStudentId > maxId) {
+        if ((await isValidId(rentBookStudentId)) == false) {
           console.log("ID do estudante inválido. Tente novamente.");
           continue;
         }
@@ -164,7 +173,7 @@ async function handleUserInput(
           "Digite o ID do estudante: "
         );
 
-        if (rentedBooksStudentId > maxId) {
+        if ((await isValidId(rentedBooksStudentId)) == false) {
           console.log("ID do estudante inválido. Tente novamente.");
           continue;
         }
@@ -180,7 +189,7 @@ async function handleUserInput(
           "Digite o ID do estudante: "
         );
 
-        if (cancelRentStudentId > maxId) {
+        if ((await isValidId(cancelRentStudentId)) == false) {
           console.log("ID do estudante inválido. Tente novamente.");
           continue;
         }
